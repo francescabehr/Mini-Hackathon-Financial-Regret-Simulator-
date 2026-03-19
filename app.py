@@ -46,7 +46,7 @@ def parse_decision(raw_text):
     if m:
         daily = float(m.group(1))
         annual = daily * 365
-        category = 'Daily Spending' 
+        category = 'Time Regret: Daily Spending'
         insight = (f"You spend ${daily:.2f} daily -> ${annual:.2f} annually. "
                    "If invested at 7% for 10 years, this becomes much larger.")
         amount = annual
@@ -54,14 +54,14 @@ def parse_decision(raw_text):
         future = calc_future_value(annual, years)
         potential_gain = future - annual
         score = regret_score(amount, potential_gain, years, recurring=True)
-        return category, amount, score, insight, future
+        return category, amount, score, insight, future, years
 
     # monthly subscription pattern
     m = re.search(r'\$?([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*)?(?:month|mo|monthly)', text)
     if m:
         monthly = float(m.group(1))
         annual = monthly * 12
-        category = 'Subscription' 
+        category = 'Time Regret: Subscription'
         insight = (f"Your subscription costs ${monthly:.2f}/month -> ${annual:.2f}/year. "
                    "Over 5 years, that could be invested instead.")
         amount = annual
@@ -69,7 +69,7 @@ def parse_decision(raw_text):
         future = calc_future_value(annual, years)
         potential_gain = future - annual
         score = regret_score(amount, potential_gain, years, recurring=True)
-        return category, amount, score, insight, future
+        return category, amount, score, insight, future, years
 
     # buy/sell investment regret pattern
     m = re.search(r'bought\s+([^\s]+)\s+at\s+\$?([0-9,]+(?:\.[0-9]+)?)\s+and\s+sold\s+at\s+\$?([0-9,]+(?:\.[0-9]+)?)', text)
@@ -77,7 +77,7 @@ def parse_decision(raw_text):
         asset = m.group(1)
         buy = float(m.group(2).replace(',', ''))
         sell = float(m.group(3).replace(',', ''))
-        category = 'Trading Loss'
+        category = 'Time Regret: Trading Loss'
         loss = buy - sell
         pct_loss = (loss / buy) * 100 if buy != 0 else 0
         insight = (f"You bought {asset} at ${buy:.2f} and sold at ${sell:.2f}, a loss of ${loss:.2f} ({pct_loss:.1f}%).")
@@ -86,7 +86,7 @@ def parse_decision(raw_text):
         future = calc_future_value(amount, years)
         potential_gain = future - amount
         score = regret_score(abs(loss), potential_gain, years, recurring=False, loss_pct=pct_loss)
-        return category, amount, score, insight, future
+        return category, amount, score, insight, future, years
 
     # currency convert regret pattern
     m = re.search(r'converted\s+\$?([0-9,]+(?:\.[0-9]+)?)\s*(\w{3})\s+to\s+(\w{3})', text)
@@ -94,12 +94,13 @@ def parse_decision(raw_text):
         amount = float(m.group(1).replace(',', ''))
         from_cur = m.group(2).upper()
         to_cur = m.group(3).upper()
-        category = 'Currency Exchange'
+        category = 'Time Regret: Currency Exchange'
         rate = fetch_exchange_rate(from_cur, to_cur)
         if rate is None:
             insight = f"Could not fetch exchange rate for {from_cur}->{to_cur}."
             score = 20
             future = amount
+            years = 1
         else:
             exchanged = amount * rate
             insight = (f"Converted {amount:.2f} {from_cur} -> {exchanged:.2f} {to_cur} at rate {rate:.4f}. "
@@ -109,13 +110,14 @@ def parse_decision(raw_text):
             potential_gain = opp - amount
             score = regret_score(amount, potential_gain, 3, recurring=False)
             future = exchanged
-        return category, amount, score, insight, future
+            years = 3
+        return category, amount, score, insight, future, years
 
     # fallback one-time purchase pattern
     m = re.search(r'\$?([0-9]+(?:\.[0-9]+)?)', text)
     if m:
         amount = float(m.group(1))
-        category = 'One-time Purchase'
+        category = 'Time Regret: One-time Purchase'
         intention = 'luxury' if 'luxury' in text or 'expensive' in text else 'general'
         insight = (f"One-time expense ${amount:.2f} treated as {intention}. "
                    "Consider that investing this amount for 5 years could grow significantly.")
@@ -123,7 +125,7 @@ def parse_decision(raw_text):
         future = calc_future_value(amount, years)
         potential_gain = future - amount
         score = regret_score(amount, potential_gain, years, recurring=False)
-        return category, amount, score, insight, future
+        return category, amount, score, insight, future, years
 
     # no numeric found
     category = 'Unknown'
@@ -131,7 +133,8 @@ def parse_decision(raw_text):
     score = 0
     insight = "Could not parse numeric value; please provide a clearer purchase statement."
     future = 0
-    return category, amount, score, insight, future
+    years = 0
+    return category, amount, score, insight, future, years
 
 
 def regret_score(base_amount, potential_gain, years, recurring=False, loss_pct=0):
@@ -163,7 +166,7 @@ def result():
     if not decision:
         return redirect(url_for('index'))
 
-    category, amount, score, insight, future = parse_decision(decision)
+    category, amount, score, insight, future, years = parse_decision(decision)
     entry = RegretEntry(
         decision_text=decision,
         category=category,
@@ -179,6 +182,7 @@ def result():
         decision=decision,
         category=category,
         amount=amount,
+        years=years,
         score=score,
         insight=insight,
         future=future,

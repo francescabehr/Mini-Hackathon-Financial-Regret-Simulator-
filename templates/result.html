@@ -18,6 +18,23 @@
       <div class="score-card">
         <h2>Regret Score: {{ score }}</h2>
         <p class="label">{{ range_label }}</p>
+        <div class="progress-wrapper">
+          <div class="progress-bar" style="width: {{ score }}%; background: linear-gradient(90deg, #ff4d4d, #ffcc00);"></div>
+        </div>
+      </div>
+
+      <div class="time-regret">
+        <h3>Time Regret Projection</h3>
+        {% if years > 0 %}
+        <p>Projected growth based on <strong>{{ years }}</strong> year(s) at 7% annual return.</p>
+        <ul>
+          <li>1-year value: ${{ (amount * 1.07) | round(2) }}</li>
+          <li>5-year value: ${{ (amount * (1.07 ** 5)) | round(2) }}</li>
+          <li>10-year value: ${{ (amount * (1.07 ** 10)) | round(2) }}</li>
+        </ul>
+        {% else %}
+        <p>Cannot compute projection; please enter more details.</p>
+        {% endif %}
       </div>
 
       <a class="button" href="/">Analyze another decision</a>
