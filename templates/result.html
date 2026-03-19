@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Regret Result</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Regret Analysis</h1>
+      <p><strong>Decision:</strong> {{ decision }}</p>
+      <p><strong>Category:</strong> {{ category }}</p>
+      <p><strong>Estimated principal:</strong> ${{ amount }}</p>
+      <p><strong>Future potential value:</strong> ${{ future | round(2) }}</p>
+      <p><strong>Insight:</strong> {{ insight }}</p>
+
+      <div class="score-card">
+        <h2>Regret Score: {{ score }}</h2>
+        <p class="label">{{ range_label }}</p>
+      </div>
+
+      <a class="button" href="/">Analyze another decision</a>
+      <a class="button" href="/history">View decision history</a>
+    </div>
+  </body>
+</html>

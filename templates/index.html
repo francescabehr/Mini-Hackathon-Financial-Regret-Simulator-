@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Financial Regret Simulator</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Financial Regret Simulator</h1>
+      <p>Enter a purchase decision and discover what you might regret later.</p>
+
+      <form method="post" action="/result">
+        <label for="decision">Financial decision (e.g., "$30 every day for a year")</label>
+        <textarea id="decision" name="decision" rows="4" required></textarea>
+
+        <button type="submit">Calculate Regret</button>
+      </form>
+
+      <h3>Sample inputs</h3>
+      <ul>
+        <li>Purchase: $1200 headphones</li>
+        <li>Monthly subscription: $50 for 12 months</li>
+        <li>Daily coffee: $5 every day</li>
+        <li>Bought BTC at $100000 and sold at $50000</li>
+        <li>Converted 10000 USD to EUR</li>
+      </ul>
+
+      <p><a href="/history">See history</a></p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>History - Regret Simulator</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Analysis History</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Decision</th>
+            <th>Category</th>
+            <th>Score</th>
+            <th>Insight</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in entries %}
+          <tr>
+            <td>{{ e.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>{{ e.decision_text }}</td>
+            <td>{{ e.category }}</td>
+            <td>{{ e.score }}</td>
+            <td>{{ e.insight }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5">No entries yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <a class="button" href="/">Back to calculator</a>
+    </div>
+  </body>
+</html>
