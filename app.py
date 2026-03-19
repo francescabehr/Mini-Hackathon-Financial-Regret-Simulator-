@@ -4,6 +4,7 @@ import requests
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from categories.config import CATEGORY_META
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///regret.db'
@@ -36,6 +37,14 @@ def fetch_exchange_rate(base='USD', target='USD'):
 
 def calc_future_value(amount, years, annual_rate=0.07):
     return amount * ((1 + annual_rate) ** years)
+
+
+def calc_years_to_goal(amount, goal, annual_rate=0.07):
+    """Calculate years needed to reach castle goal via compound growth."""
+    if amount <= 0:
+        return float('inf')
+    years = math.log(goal / amount) / math.log(1 + annual_rate)
+    return max(0, round(years, 1))
 
 
 def parse_decision(raw_text):
@@ -177,6 +186,9 @@ def result():
     db.session.add(entry)
     db.session.commit()
 
+    # calculate castle milestone
+    castle_goal = 5000000
+    years_to_castle = calc_years_to_goal(amount, castle_goal)
     return render_template(
         'result.html',
         decision=decision,
@@ -186,14 +198,34 @@ def result():
         score=score,
         insight=insight,
         future=future,
-        range_label=score_label(score)
+        range_label=score_label(score),
+        category_meta=CATEGORY_META.get(category, CATEGORY_META['Unknown']),
+        castle_goal=castle_goal,
+        years_to_castle=years_to_castle,
     )
 
 
 @app.route('/history', methods=['GET'])
 def history():
     entries = RegretEntry.query.order_by(RegretEntry.created_at.desc()).limit(50).all()
-    return render_template('history.html', entries=entries)
+    # prepare chart data (recent entries)
+    chart_labels = [e.created_at.strftime('%H:%M') for e in entries][::-1]
+    chart_scores = [e.score for e in entries][::-1]
+    chart_categories = [e.category for e in entries][::-1]
+    # calculate total regret amount and castle goal
+    total_regret = sum(e.amount for e in entries)
+    castle_goal = 5000000  # $5M castle
+    years_to_castle = calc_years_to_goal(total_regret, castle_goal)
+    return render_template(
+        'history.html',
+        entries=entries,
+        chart_labels=chart_labels,
+        chart_scores=chart_scores,
+        chart_categories=chart_categories,
+        total_regret=total_regret,
+        castle_goal=castle_goal,
+        years_to_castle=years_to_castle,
+    )
 
 
 def score_label(score):
