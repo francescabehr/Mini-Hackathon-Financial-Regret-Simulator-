@@ -13,7 +13,14 @@
       <p><strong>Category:</strong> {{ category }}</p>
       <p><strong>Estimated principal:</strong> ${{ amount }}</p>
       <p><strong>Future potential value:</strong> ${{ future | round(2) }}</p>
+      <p><strong>Potential saved value:</strong> ${{ saved | round(2) }}</p>
+      <p><strong>Modeled value factor:</strong> {{ value_factor }}x</p>
       <p><strong>Insight:</strong> {{ insight }}</p>
+
+      <div class="chart-card">
+        <h2>Graphical comparison</h2>
+        <canvas id="valueChart" width="600" height="340"></canvas>
+      </div>
 
       <div class="score-card">
         <h2>Regret Score: {{ score }}</h2>
@@ -23,5 +30,33 @@
       <a class="button" href="/">Analyze another decision</a>
       <a class="button" href="/history">View decision history</a>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    <script>
+      const ctx = document.getElementById('valueChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Spent', 'Future Value', 'Potential Saved'],
+          datasets: [{
+            label: 'USD value comparison',
+            data: [{{ amount }}, {{ future | round(2) }}, {{ saved | round(2) }}],
+            backgroundColor: ['#007bff', '#28a745', '#ffc107'],
+            borderColor: ['#0056b3', '#1e7e34', '#d39e00'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'USD' } }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: true }
+          }
+        }
+      });
+    </script>
   </body>
 </html>

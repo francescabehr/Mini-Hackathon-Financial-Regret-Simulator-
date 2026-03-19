@@ -4,6 +4,8 @@ h1 { margin-top: 0; color: #283646; }
 form label { display:block; margin-bottom: 8px; font-weight: 600; }
 textarea { width:100%; padding:10px; font-size:16px; margin-bottom:16px; border:1px solid #ccd6e3; border-radius:6px; }
 button, .button { background:#007bff; color:#fff; border:none; padding:10px 16px; border-radius:6px; cursor:pointer; text-decoration:none; display:inline-block; margin-right:8px; }
+.chart-card { margin: 20px 0; padding: 14px; border: 1px solid #ccc; border-radius: 8px; background: #fefcf8; }
+.chart-card h2 { margin-top: 0; margin-bottom: 12px; color: #1a2d56; }
 .score-card { margin: 20px 0; padding: 14px; border: 1px solid #ccc; border-radius: 8px; background: #f6f9ff; }
 .score-card h2 { margin: 0; color: #1a2d56; }
 .label { margin-top: 4px; color: #55607b; font-weight: bold; }

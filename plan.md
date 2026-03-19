@@ -54,4 +54,16 @@
 - Add inflation API from World Bank (if time remains)
 - Add unit tests for `parse_decision()` and `regret_score()`
 
+## Enhanced Feature: Graphical Comparison
+
+- On `/result`, add computed fields:
+  - `saved = max(0, future - amount)`
+  - `value_factor = round((future / amount) if amount > 0 else 0, 2)`
+- Display in `result.html`:
+  - potential saved value and modeled value factor
+- Add chart card with Chart.js and bar chart for:
+  - Spent, Future Value, Potential Saved
+- Add CSS for `.chart-card` in `static/styles.css` to match UI
+- keeps existing regret score + insights flow
+
 

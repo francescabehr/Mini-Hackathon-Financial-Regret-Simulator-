@@ -174,6 +174,9 @@ def result():
     db.session.add(entry)
     db.session.commit()
 
+    saved = max(0, future - amount)
+    value_factor = round((future / amount) if amount > 0 else 0, 2)
+
     return render_template(
         'result.html',
         decision=decision,
@@ -182,6 +185,8 @@ def result():
         score=score,
         insight=insight,
         future=future,
+        saved=saved,
+        value_factor=value_factor,
         range_label=score_label(score)
     )
 
