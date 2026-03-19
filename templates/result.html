@@ -57,10 +57,10 @@
 
       <div class="castle-goal">
         <h3>🏰 Castle Goal Milestone</h3>
-        {% if years_to_castle == float('inf') %}
-        <p>Start investing to reach a ${{ "{:,.0f}".format(castle_goal) }} castle in Regret Kingdom!</p>
+        {% if years_to_castle > 1000 %}
+        <p>Start investing to reach a $5,000,000 castle in Regret Kingdom!</p>
         {% else %}
-        <p>If you invested ${{ amount | round(2) }} at 7% annually, you could buy a castle (${{ "{:,.0f}".format(castle_goal) }}) in <strong>{{ years_to_castle }} years</strong>.</p>
+        <p>If you invested ${{ amount | round(2) }} at 7% annually, you could buy a castle ($5,000,000) in <strong>{{ years_to_castle }} years</strong>.</p>
         {% endif %}
       </div>
 
