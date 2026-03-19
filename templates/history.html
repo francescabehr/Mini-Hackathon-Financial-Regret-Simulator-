@@ -19,14 +19,14 @@
     <div class="container">
       <h1>Analysis History</h1>
       <div class="theme-image-history">
-        <img src="https://images.unsplash.com/photo-1537134218053-0f68bb6ef9c5?auto=format&fit=crop&w=1200&q=80" alt="Park map retro" />
+        <img src="https://www.tripsavvy.com/thmb/M3ufdbQS56NlgEVHcqweUKQ4f-c=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Map_CA_Disneyland_Disney-566a2f525f9b583dc31d3290.jpg" alt="Park map retro" />
       </div>
 
       <div class="castle-goal-summary">
         <h3>🏰 Your Regret Kingdom Castle Goal</h3>
-        <p>Total regret amount: <strong>${{ "{:,.2f}".format(total_regret) }}</strong></p>
-        <p>Castle target: <strong>${{ "{:,.0f}".format(castle_goal) }}</strong></p>
-        {% if years_to_castle == float('inf') %}
+        <p>Total regret amount: <strong>${{ total_regret | round(2) }}</strong></p>
+        <p>Castle target: <strong>$5,000,000</strong></p>
+        {% if total_regret <= 0 %}
         <p>You haven't regretted any amount yet. Start analyzing to begin your path to the castle!</p>
         {% else %}
         <p>At 7% annual growth, you could afford a castle in <strong>{{ years_to_castle }} years</strong>.</p>
