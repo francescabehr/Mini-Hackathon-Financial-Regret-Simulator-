@@ -7,11 +7,21 @@
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
+    <nav class="navbar">
+      <div class="nav-container">
+        <span class="nav-title">🏰 Regret Kingdom</span>
+        <ul class="nav-links">
+          <li><a href="/">Calculator</a></li>
+          <li><a href="/history">History & Chart</a></li>
+        </ul>
+      </div>
+    </nav>
     <div class="container">
       <h1>Regret Analysis</h1>
       <p><strong>Decision:</strong> {{ decision }}</p>
       <p><strong>Category:</strong> {{ category }}</p>
       <p><strong>Estimated principal:</strong> ${{ amount }}</p>
+      <p><strong>Time Regret category:</strong> <span class="chip" style="background: {{ category_meta.color }}">{{ category_meta.description }}</span></p>
       <p><strong>Future potential value:</strong> ${{ future | round(2) }}</p>
       <p><strong>Potential saved value:</strong> ${{ saved | round(2) }}</p>
       <p><strong>Modeled value factor:</strong> {{ value_factor }}x</p>
@@ -25,6 +35,40 @@
       <div class="score-card">
         <h2>Regret Score: {{ score }}</h2>
         <p class="label">{{ range_label }}</p>
+        <div class="progress-wrapper">
+          <div class="progress-bar" style="width: {{ score }}%; background: linear-gradient(90deg, #ff4d4d, #ffcc00);"></div>
+        </div>
+      </div>
+
+      <div class="theme-image-result">
+        <img src="https://images.unsplash.com/photo-1587502536263-5be6d724c7dd?auto=format&fit=crop&w=1200&q=80" alt="Fireworks over castle" />
+      </div>
+
+      <div class="time-regret">
+        <h3>Time Regret Projection</h3>
+        {% if years > 0 %}
+        <p>Projected growth based on <strong>{{ years }}</strong> year(s) at 7% annual return.</p>
+        <ul>
+          <li>1-year value: ${{ (amount * 1.07) | round(2) }}</li>
+          <li>5-year value: ${{ (amount * (1.07 ** 5)) | round(2) }}</li>
+          <li>10-year value: ${{ (amount * (1.07 ** 10)) | round(2) }}</li>
+        </ul>
+        {% else %}
+        <p>Cannot compute projection; please enter more details.</p>
+        {% endif %}
+      </div>
+     
+      <div class="disney-note">
+        <p>✨ Welcome to "Regret Kingdom" — like Disney, every moment is magic, but if you spend $5 daily, you might miss a castle in 10 years!</p>
+      </div>
+
+      <div class="castle-goal">
+        <h3>🏰 Castle Goal Milestone</h3>
+        {% if years_to_castle == float('inf') %}
+        <p>Start investing to reach a ${{ "{:,.0f}".format(castle_goal) }} castle in Regret Kingdom!</p>
+        {% else %}
+        <p>If you invested ${{ amount | round(2) }} at 7% annually, you could buy a castle (${{ "{:,.0f}".format(castle_goal) }}) in <strong>{{ years_to_castle }} years</strong>.</p>
+        {% endif %}
       </div>
 
       <a class="button" href="/">Analyze another decision</a>

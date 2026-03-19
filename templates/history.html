@@ -7,8 +7,33 @@
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
+    <nav class="navbar">
+      <div class="nav-container">
+        <span class="nav-title">🏰 Regret Kingdom</span>
+        <ul class="nav-links">
+          <li><a href="/">Calculator</a></li>
+          <li><a href="/history">History & Chart</a></li>
+        </ul>
+      </div>
+    </nav>
     <div class="container">
       <h1>Analysis History</h1>
+      <div class="theme-image-history">
+        <img src="https://images.unsplash.com/photo-1537134218053-0f68bb6ef9c5?auto=format&fit=crop&w=1200&q=80" alt="Park map retro" />
+      </div>
+
+      <div class="castle-goal-summary">
+        <h3>🏰 Your Regret Kingdom Castle Goal</h3>
+        <p>Total regret amount: <strong>${{ "{:,.2f}".format(total_regret) }}</strong></p>
+        <p>Castle target: <strong>${{ "{:,.0f}".format(castle_goal) }}</strong></p>
+        {% if years_to_castle == float('inf') %}
+        <p>You haven't regretted any amount yet. Start analyzing to begin your path to the castle!</p>
+        {% else %}
+        <p>At 7% annual growth, you could afford a castle in <strong>{{ years_to_castle }} years</strong>.</p>
+        {% endif %}
+      </div>
+      
+      <h2>Past Analyses</h2>
       <table>
         <thead>
           <tr>
@@ -33,7 +58,41 @@
           {% endfor %}
         </tbody>
       </table>
+
+      <div class="chart-shell">
+        <h3>Score over time (most recent up to 50)</h3>
+        <canvas id="historyChart" width="800" height="320"></canvas>
+      </div>
       <a class="button" href="/">Back to calculator</a>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      const chartLabels = {{ chart_labels|tojson | safe }};
+      const chartScores = {{ chart_scores|tojson | safe }};
+
+      new Chart(document.getElementById('historyChart'), {
+        type: 'line',
+        data: {
+          labels: chartLabels,
+          datasets: [{
+            label: 'Regret Score',
+            data: chartScores,
+            borderColor: '#b33771',
+            backgroundColor: 'rgba(255, 118, 117, 0.35)',
+            tension: 0.25,
+            fill: true
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              min: 0,
+              max: 100,
+              title: { display: true, text: 'Score' }
+            }
+          }
+        }
+      });
+    </script>
   </body>
 </html>
